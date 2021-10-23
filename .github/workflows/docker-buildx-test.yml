@@ -55,8 +55,8 @@ jobs:
       - name: Checkout develop
         run: |
           set -eu
-#          DEVELOP_BRANCH=develop
-#          git reset --hard $DEVELOP_BRANCH
+          # DEVELOP_BRANCH=develop
+          # git reset --hard $DEVELOP_BRANCH
           git status
           git branch
       - name: Login to DockerHub
