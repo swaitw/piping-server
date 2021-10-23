@@ -1,0 +1,30 @@
+name: Docker push for develop
+
+on:
+  push:
+#    branches:
+#    - develop
+#  schedule:
+#    - cron: '*/30 * * * *'
+
+jobs:
+  build_and_push:
+    strategy:
+      matrix:
+        docker-platform:
+          - linux/amd64
+          - linux/arm/v6
+          - linux/arm/v7
+          - linux/arm64/v8
+    runs-on: ubuntu-18.04
+    steps:
+    - uses: actions/checkout@v2
+    - run: git fetch --unshallow
+    - name: Build & Push latest version
+      run: |
+        DEVELOP_BRANCH=develop
+        git reset --hard $DEVELOP_BRANCH
+        git status
+        docker buildx build -t nwtgck/piping-server:$DEVELOP_BRANCH --platform=${{ matrix.docker-platform }} .
+        echo ${{ secrets.DOCKER_HUB_TOKEN }} | docker login -u nwtgck --password-stdin
+        docker push nwtgck/piping-server:buildx-test
