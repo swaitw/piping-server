@@ -9,13 +9,13 @@ on:
 
 jobs:
   build_and_push:
-    strategy:
-      matrix:
-        docker-platform:
-          - linux/amd64
-          - linux/arm/v6
-          - linux/arm/v7
-          - linux/arm64/v8
+#    strategy:
+#      matrix:
+#        docker-platform:
+#          - linux/amd64
+#          - linux/arm/v6
+#          - linux/arm/v7
+#          - linux/arm64/v8
     runs-on: ubuntu-18.04
     steps:
     - uses: actions/checkout@v2
@@ -34,6 +34,7 @@ jobs:
         #  docker buildx build --platform=$platform -t nwtgck/piping-server:buildx-test .
         #done
         echo ${{ secrets.DOCKER_HUB_TOKEN }} | docker login -u nwtgck --password-stdin
-        docker buildx build --platform=${{ matrix.docker-platform }} -t nwtgck/piping-server:buildx-test --push .
+        # docker buildx build --platform=${{ matrix.docker-platform }} -t nwtgck/piping-server:buildx-test --push .
+        docker buildx build --platform=linux/amd64,linux/arm/v6 -t nwtgck/piping-server:buildx-test --push .
         docker images
         # docker push nwtgck/piping-server:buildx-test
