@@ -33,7 +33,7 @@ jobs:
         #for platform in linux/amd64 linux/arm/v6; do
         #  docker buildx build --platform=$platform -t nwtgck/piping-server:buildx-test .
         #done
+        echo ${{ secrets.DOCKER_HUB_TOKEN }} | docker login -u nwtgck --password-stdin
         docker buildx build --platform=${{ matrix.docker-platform }} -t nwtgck/piping-server:buildx-test --push .
         docker images
-        echo ${{ secrets.DOCKER_HUB_TOKEN }} | docker login -u nwtgck --password-stdin
-        docker push nwtgck/piping-server:buildx-test
+        # docker push nwtgck/piping-server:buildx-test
