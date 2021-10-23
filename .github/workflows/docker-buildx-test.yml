@@ -20,6 +20,8 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - run: git fetch --unshallow
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v1
     - name: Build & Push latest version
       run: |
         DEVELOP_BRANCH=develop
