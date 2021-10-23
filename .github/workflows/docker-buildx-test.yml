@@ -29,7 +29,7 @@ jobs:
         DEVELOP_BRANCH=develop
         # git reset --hard $DEVELOP_BRANCH
         git status
-        docker buildx build -t nwtgck/piping-server:buildx-test --platform=${{ matrix.docker-platform }} .
+        docker buildx build --platform=${{ matrix.docker-platform }} -t nwtgck/piping-server:buildx-test .
         docker images
         echo ${{ secrets.DOCKER_HUB_TOKEN }} | docker login -u nwtgck --password-stdin
         docker push nwtgck/piping-server:buildx-test
