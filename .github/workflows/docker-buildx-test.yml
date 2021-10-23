@@ -7,34 +7,58 @@ on:
 #  schedule:
 #    - cron: '*/30 * * * *'
 
+#jobs:
+#  build_and_push:
+##    strategy:
+##      matrix:
+##        docker-platform:
+##          - linux/amd64
+##          - linux/arm/v6
+##          - linux/arm/v7
+##          - linux/arm64/v8
+#    runs-on: ubuntu-18.04
+#    steps:
+#    - uses: actions/checkout@v2
+#    - run: git fetch --unshallow
+#    - name: Set up QEMU
+#      uses: docker/setup-qemu-action@v1
+##    - name: Set up Docker Buildx
+##      uses: docker/setup-buildx-action@v1
+#    - name: Build & Push latest version
+#      run: |
+#        set -eu
+#        DEVELOP_BRANCH=develop
+#        # git reset --hard $DEVELOP_BRANCH
+#        git status
+#        #for platform in linux/amd64 linux/arm/v6; do
+#        #  docker buildx build --platform=$platform -t nwtgck/piping-server:buildx-test .
+#        #done
+#        echo ${{ secrets.DOCKER_HUB_TOKEN }} | docker login -u nwtgck --password-stdin
+#        # docker buildx build --platform=${{ matrix.docker-platform }} -t nwtgck/piping-server:buildx-test --push .
+#        docker buildx build --platform=linux/amd64,linux/arm/v6 -t nwtgck/piping-server:buildx-test --push .
+#        docker images
+#        # docker push nwtgck/piping-server:buildx-test
+
+
 jobs:
-  build_and_push:
-#    strategy:
-#      matrix:
-#        docker-platform:
-#          - linux/amd64
-#          - linux/arm/v6
-#          - linux/arm/v7
-#          - linux/arm64/v8
-    runs-on: ubuntu-18.04
+  docker:
+    runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - run: git fetch --unshallow
-    - name: Set up QEMU
-      uses: docker/setup-qemu-action@v1
-#    - name: Set up Docker Buildx
-#      uses: docker/setup-buildx-action@v1
-    - name: Build & Push latest version
-      run: |
-        set -eu
-        DEVELOP_BRANCH=develop
-        # git reset --hard $DEVELOP_BRANCH
-        git status
-        #for platform in linux/amd64 linux/arm/v6; do
-        #  docker buildx build --platform=$platform -t nwtgck/piping-server:buildx-test .
-        #done
-        echo ${{ secrets.DOCKER_HUB_TOKEN }} | docker login -u nwtgck --password-stdin
-        # docker buildx build --platform=${{ matrix.docker-platform }} -t nwtgck/piping-server:buildx-test --push .
-        docker buildx build --platform=linux/amd64,linux/arm/v6 -t nwtgck/piping-server:buildx-test --push .
-        docker images
-        # docker push nwtgck/piping-server:buildx-test
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: nwtgck
+          password: ${{ secrets.DOCKER_HUB_TOKEN }}
+      - name: Build and push
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: nwtgck/piping-server:buildx-test2
