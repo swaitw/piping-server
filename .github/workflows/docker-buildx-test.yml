@@ -9,13 +9,13 @@ on:
 
 jobs:
   build_and_push:
-#    strategy:
-#      matrix:
-#        docker-platform:
-#          - linux/amd64
-#          - linux/arm/v6
-#          - linux/arm/v7
-#          - linux/arm64/v8
+    strategy:
+      matrix:
+        docker-platform:
+          - linux/amd64
+          - linux/arm/v6
+          - linux/arm/v7
+          - linux/arm64/v8
     runs-on: ubuntu-18.04
     steps:
     - uses: actions/checkout@v2
@@ -30,10 +30,10 @@ jobs:
         DEVELOP_BRANCH=develop
         # git reset --hard $DEVELOP_BRANCH
         git status
-        for platform in linux/amd64 linux/arm/v6; do
-          docker buildx build --platform=$platform -t nwtgck/piping-server:buildx-test .
-        done
-        # docker buildx build --platform=${{ matrix.docker-platform }} --output=type=registry -t nwtgck/piping-server:buildx-test .
+        #for platform in linux/amd64 linux/arm/v6; do
+        #  docker buildx build --platform=$platform -t nwtgck/piping-server:buildx-test .
+        #done
+        docker buildx build --platform=${{ matrix.docker-platform }} -t nwtgck/piping-server:buildx-test --push .
         docker images
         echo ${{ secrets.DOCKER_HUB_TOKEN }} | docker login -u nwtgck --password-stdin
         docker push nwtgck/piping-server:buildx-test
