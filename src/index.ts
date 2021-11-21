@@ -4,6 +4,7 @@
 import * as fs from "fs";
 import * as http from "http";
 import * as http2 from "http2";
+import * as tls from "tls";
 import * as log4js from "log4js";
 import * as yargs from "yargs";
 
@@ -57,10 +58,20 @@ if (enableHttps && httpsPort !== undefined) {
   if (serverKeyPath === undefined || serverCrtPath === undefined) {
     logger.error("Error: --key-path and --crt-path should be specified");
   } else {
-    http2.createSecureServer(
-      {
+    let secureContext: tls.SecureContext;
+    const updateSecureContext = () => {
+      secureContext = tls.createSecureContext({
         key: fs.readFileSync(serverKeyPath),
         cert: fs.readFileSync(serverCrtPath),
+      });
+      logger.info("Certificate loaded");
+    }
+    updateSecureContext();
+    fs.watchFile(serverCrtPath, updateSecureContext);
+    fs.watchFile(serverKeyPath, updateSecureContext);
+    http2.createSecureServer(
+      {
+        SNICallback: (servername, cb) => cb(null, secureContext),
         allowHTTP1: true
       },
       pipingServer.generateHandler(true)
