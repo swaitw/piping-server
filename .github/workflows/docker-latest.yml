@@ -17,7 +17,7 @@ jobs:
     - run: git fetch --unshallow
     - name: Get latest tag
       id: latest_tag
-      run: ruby -e 'puts ("::set-output name=latest_tag::v#{`git tag`.each_line.map{|l| begin Gem::Version::new(l.sub(/^v/, "")); rescue; nil end}.compact.max.to_s}")'
+      run: ruby -e 'puts("latest_tag=v#{`git tag`.each_line.map{|l| begin Gem::Version::new(l.sub(/^v/, "")); rescue; nil end}.compact.max.to_s}")' >> $GITHUB_OUTPUT
     - name: Checkout latest tag
       run: |
         set -eu
